@@ -160,6 +160,4 @@ bash create.sh
 
     ドキュメント：
 
-    ```md
     Caveat emptor: this library is a work in progress and does not currently support all shapefile geometry types (see [shp.js](https://github.com/mbostock/shapefile/blob/master/shp.js) for details). It also only supports dBASE III and has no error checking. Please contribute if you want to help!
-    ```
