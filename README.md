@@ -162,3 +162,21 @@ bash create.sh
     ドキュメント：
 
     Caveat emptor: this library is a work in progress and does not currently support all shapefile geometry types (see [shp.js](https://github.com/mbostock/shapefile/blob/master/shp.js) for details). It also only supports dBASE III and has no error checking. Please contribute if you want to help!
+
+<br />
+
+---
+
+<br />
+
+## TODO:
+
+<br />
+
+- `jest` によるテストコードの追加
+
+- `eslint` によるコードの整形
+
+- `npm package` 化
+
+- `postgres` と連携して、データを取得する機能の追加
