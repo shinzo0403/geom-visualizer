@@ -74,15 +74,16 @@ bash create.sh
 
 <br />
 
-| オプション名  | 型     | 説明                 | デフォルト値 |
-| ------------- | ------ | -------------------- | ------------ |
-| `title`       | string | キャンバスのタイトル | title        |
-| `canvasWidth` | number | キャンバスの幅       | 800          |
-| `strokeStyle` | string | ストロークスタイル   | #000         |
-| `lineWidth`   | number | ラインの幅           | 1            |
-| `fillStyle`   | string | 塗りつぶしスタイル   | red          |
-| `bgColor`     | string | 背景色               | #fff         |
-| `scoreKey`    | string | スコアキー           | null         |
+| オプション名  | 型     | 説明                                                                             | デフォルト値 |
+| ------------- | ------ | -------------------------------------------------------------------------------- | ------------ |
+| `title`       | string | キャンバスのタイトル                                                             | title        |
+| `encoder`     | string | エンコーダー（[iconv-lite](https://github.com/ashtuchkin/iconv-lite)で有効な値） | utf-8        |
+| `canvasWidth` | number | キャンバスの幅                                                                   | 800          |
+| `strokeStyle` | string | ストロークスタイル                                                               | #000         |
+| `lineWidth`   | number | ラインの幅                                                                       | 1            |
+| `fillStyle`   | string | 塗りつぶしスタイル                                                               | red          |
+| `bgColor`     | string | 背景色                                                                           | #fff         |
+| `scoreKey`    | string | スコアキー                                                                       | null         |
 
 <br />
 

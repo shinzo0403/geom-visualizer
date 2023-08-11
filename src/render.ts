@@ -13,6 +13,7 @@ export default class GeoJsonRenderer {
   private bounds?: number[];
 
   private title: string | null;
+  private encoder: string;
   private canvasWidth: number;
   private canvasHeight: number | undefined = undefined;
   private strokeStyle: string;
@@ -33,6 +34,7 @@ export default class GeoJsonRenderer {
   constructor(props: Partial<Exclude<Props, 'inputFile'>> = {}) {
     const {
       title = C.DEFAULT_TITLE,
+      encoder = C.DEFAULT_ENCODER,
       canvasWidth = C.DEFAULT_CANVAS_WIDTH,
       strokeStyle = C.DEFAULT_STROKE_STYLE,
       lineWidth = C.DEFAULT_LINE_WIDTH,
@@ -42,6 +44,7 @@ export default class GeoJsonRenderer {
     } = props;
 
     this.title = title;
+    this.encoder = encoder;
     this.canvasWidth = canvasWidth;
     this.strokeStyle = strokeStyle;
     this.lineWidth = lineWidth;
@@ -63,11 +66,14 @@ export default class GeoJsonRenderer {
     const outputFile = path.join(outputDir, `${fileName}.png`);
 
     // 1. geojson ファイルの bbox を取得する
-    const iteratorWithBbox = GeoJsonConverter.convert(inputFile, 'utf-8');
+    const iteratorWithBbox = GeoJsonConverter.convert(inputFile, this.encoder);
     await this.getBounds(iteratorWithBbox);
 
     // 2. geojson ファイルを読み込んで、各 feature を描画する
-    const iteratorWithFeature = GeoJsonConverter.convert(inputFile, 'utf-8');
+    const iteratorWithFeature = GeoJsonConverter.convert(
+      inputFile,
+      this.encoder
+    );
     await this.renderGeoJson(iteratorWithFeature);
 
     // 3. タイトルを描画する

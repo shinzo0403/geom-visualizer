@@ -11,6 +11,11 @@ const OPTIONS: { [key: string]: Options } = {
     describe: 'Title for the canvas',
     default: C.DEFAULT_TITLE,
   },
+  encoder: {
+    type: 'string',
+    describe: 'Encoder',
+    default: C.DEFAULT_ENCODER,
+  },
   canvasWidth: {
     type: 'number',
     describe: 'Width of the canvas',
@@ -72,6 +77,12 @@ export default async function script() {
       name: 'title',
       message: 'Enter title for the canvas:',
       default: argv.title,
+    },
+    {
+      type: 'input',
+      name: 'encoder',
+      message: 'Enter encoder:',
+      default: argv.encoder,
     },
     {
       type: 'number',
