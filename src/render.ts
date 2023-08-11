@@ -1,11 +1,11 @@
 import * as T from '@turf/turf';
 import { Canvas, CanvasRenderingContext2D, createCanvas } from 'canvas';
+import { ScaleLinear, scaleLinear } from 'd3-scale';
 import fs from 'fs';
 import path from 'path';
-import GeoJsonConverter, { GeoJsonIterator } from './stream';
-import { scaleLinear, ScaleLinear } from 'd3-scale';
-import { Props } from './type';
 import * as C from './constants';
+import GeoJsonConverter from './stream';
+import { GeoJsonIterator, Props } from './type';
 
 export default class GeoJsonRenderer {
   private canvas: Canvas | null = null;

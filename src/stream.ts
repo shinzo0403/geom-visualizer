@@ -3,22 +3,18 @@ import csvParser from 'csv-parser';
 import fs from 'fs';
 import iconv from 'iconv-lite';
 import { createRequire } from 'module';
+import path from 'path';
 import { Transform } from 'stream';
 import streamJSON from 'stream-json';
 import streamJSONPick from 'stream-json/filters/Pick';
 import streamJSONArray from 'stream-json/streamers/StreamArray';
-import * as T from '@turf/turf';
-import path from 'path';
+import { GeoJsonIterator } from './type';
 
 const { parser } = streamJSON;
 const { pick } = streamJSONPick;
 const { streamArray } = streamJSONArray;
 const require = createRequire(import.meta.url);
 const shpStream = require('shp-stream');
-
-export interface GeoJsonIterator {
-  [Symbol.asyncIterator](): AsyncIterator<T.Feature<T.Geometries>>;
-}
 
 /**
  * データ型を判定して、geojson feature のストリームを返す

@@ -1,0 +1,16 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  //   "path-autocomplete.pathMappings": {
+  //     "@": "${folder}/src"
+  //   },
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  "javascript.preferences.importModuleSpecifier": "relative",
+  "typescript.preferences.importModuleSpecifier": "relative",
+
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+  "typescript.preferences.importModuleSpecifierEnding": "js"
+}

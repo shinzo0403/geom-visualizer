@@ -1,10 +1,9 @@
-import yargs, { Options } from 'yargs';
-import inquirer from 'inquirer';
-import { execSync } from 'child_process';
-import { hideBin } from 'yargs/helpers';
 import fs from 'fs';
-import { Props } from './type';
+import inquirer from 'inquirer';
+import yargs, { Options } from 'yargs';
+import { hideBin } from 'yargs/helpers';
 import * as C from './constants';
+import { Props } from './type';
 
 const OPTIONS: { [key: string]: Options } = {
   title: {
