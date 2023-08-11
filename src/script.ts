@@ -51,8 +51,6 @@ function isPromise(obj: any): obj is Promise<unknown> {
 export default async function script() {
   const inputFile = process.argv[2];
 
-  console.log(process.argv);
-
   if (!inputFile || !fs.existsSync(inputFile)) {
     console.error(
       'Input file is not specified or does not exist. :' + inputFile
