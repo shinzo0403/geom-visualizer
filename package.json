@@ -1,7 +1,8 @@
 {
   "name": "@shinzo0403/geom-visualizer",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.2",
+  "description": "instantly visualize geojson data on the map",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -10,7 +11,19 @@
     "prepare": "npm run build",
     "build": "tsc"
   },
-  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shinzo0403/geom-visualizer"
+  },
+  "keywords": [
+    "geojson",
+    "map",
+    "visualization",
+    "cli"
+  ],
+  "homepage": "https://github.com/shinzo0403/geom-visualizer/blob/master/README.md",
+  "author": "Shin Tanaka",
+  "license": "MIT",
   "dependencies": {
     "@jest/globals": "^29.5.0",
     "@terraformer/wkt": "^2.2.0",
@@ -34,8 +47,6 @@
     "typescript": "^4.7.4",
     "yargs": "^17.7.2"
   },
-  "author": "Shin Tanaka",
-  "license": "ISC",
   "devDependencies": {
     "@types/inquirer": "^9.0.3",
     "@types/csvtojson": "^2.0.0",
