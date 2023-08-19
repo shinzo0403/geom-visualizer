@@ -18,8 +18,7 @@
     "geom-visualizer": "./dist/index.js"
   },
   "publishConfig": {
-    "access": "public",
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "repository": {
     "type": "git",
