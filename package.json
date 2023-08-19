@@ -12,7 +12,7 @@
     "prepare": "npm run build",
     "clean": "rm -rf dist",
     "build": "npm run clean ; tsc",
-    "publish": "npm run build && npm run update && npm publish --access public"
+    "publish": "npm run build ; npm run update ; npm publish --access public"
   },
   "bin": {
     "geom-visualizer": "./dist/index.js"
