@@ -15,5 +15,3 @@ package-lock.json
 .DS_Store
 
 .npmrc
-
-/dist
