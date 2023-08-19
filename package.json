@@ -17,9 +17,14 @@
   "bin": {
     "geom-visualizer": "./dist/index.js"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/shinzo0403/geom-visualizer"
+    "url": "https://github.com/shizno0403/geom-visualizer.git",
+    "directory": "geom-visualizer/dist"
   },
   "keywords": [
     "geojson",
