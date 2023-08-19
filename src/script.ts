@@ -1,7 +1,7 @@
 import inquirer from 'inquirer';
 import yargs, { Options } from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import * as C from './constants';
+import * as C from './constants.js';
 import { Props } from './type';
 
 const OPTIONS: { [key: string]: Options } = {

@@ -3,8 +3,8 @@ import { Canvas, CanvasRenderingContext2D, createCanvas } from 'canvas';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import fs from 'fs';
 import path from 'path';
-import * as C from './constants';
-import GeoJsonConverter from './stream';
+import * as C from './constants.js';
+import GeoJsonConverter from './stream.js';
 import { GeoJsonIterator, Props } from './type';
 
 export default class GeoJsonRenderer {

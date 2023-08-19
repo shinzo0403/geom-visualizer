@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import fs from 'fs';
-import GeoJsonRenderer from './render';
-import script from './script';
+import GeoJsonRenderer from './render.js';
+import script from './script.js';
 
 (async () => {
   const props = await script();
