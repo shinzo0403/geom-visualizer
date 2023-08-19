@@ -29,6 +29,8 @@ npm install @shinzo0403/geom-visualizer
 
 ---
 
+<br />
+
 ## 実行
 
 <br />
@@ -83,7 +85,7 @@ Node.js + TypeScript を使用して、様々な形式のジオメトリファ�
 | ------------- | ------ | -------------------------------------------------------------------------------- | ------------ |
 | `inputFile`   | string | 入力ファイルのパス(json,geojson,csv,shp のみ対応)                                | null         |
 | `outputDir`   | string | 出力先のディレクトリパス                                                         | out          |
-| `title`       | string | キャンバスのタイトル                                                             | title        |
+| `title`       | string | キャンバスのタイトル                                                             | -            |
 | `encoder`     | string | エンコーダー（[iconv-lite](https://github.com/ashtuchkin/iconv-lite)で有効な値） | utf-8        |
 | `canvasWidth` | number | キャンバスの幅                                                                   | 800          |
 | `strokeStyle` | string | ストロークスタイル                                                               | #000         |
@@ -98,6 +100,24 @@ Node.js + TypeScript を使用して、様々な形式のジオメトリファ�
 
 <br />
 
+※ インタラクティブにしない場合
+
+```bash
+geom-visualizer \
+    --inputFile=./sample/sample.geojson \
+    --outputDir=./out \
+    --title=sample \
+    --encoder=utf-8 \
+    --canvasWidth=800 \
+    --strokeStyle=#000 \
+    --lineWidth=1 \
+    --fillStyle=red \
+    --bgColor=#fff \
+    --scoreKey=score
+```
+
+<br />
+
 ---
 
 <br />
@@ -106,7 +126,7 @@ Node.js + TypeScript を使用して、様々な形式のジオメトリファ�
 
 <br />
 
-- [**canvas**](https://github.com/Automattic/node-canvas)
+- [**shape**](https://www.npmjs.com/package/sharp)
 - [**Turf.js**](https://github.com/Turfjs/turf)
 - [**yargs**](https://github.com/yargs/yargs)
 - [**inquirer.js**](https://github.com/SBoudrias/Inquirer.js)
@@ -132,33 +152,6 @@ Node.js + TypeScript を使用して、様々な形式のジオメトリファ�
     ```bash
     chmod +x ./node_modules/.bin/geom-visualizer
     ```
-
-    <br />
-
-- **Q.** `Error: Cannot find module 'canvas'` と表示される
-
-  - **A.** `canvas` に必要なライブラリがインストールされていません。以下[Automattic/node-canvas]()の README を参考に、必要なライブラリをインストールしてください。
-
-    <br />
-
-    ### Compiling
-
-    If you don't have a supported OS or processor architecture, or you use `--build-from-source`, the module will be compiled on your system. This requires several dependencies, including Cairo and Pango.
-
-    For detailed installation information, see the [wiki](https://github.com/Automattic/node-canvas/wiki/_pages). One-line installation instructions for common OSes are below. Note that libgif/giflib, librsvg and libjpeg are optional and only required if you need GIF, SVG and JPEG support, respectively. Cairo v1.10.0 or later is required.
-
-    | OS      | Command                                                                                                         |
-    | ------- | --------------------------------------------------------------------------------------------------------------- |
-    | OS X    | Using [Homebrew](https://brew.sh/):<br/>`brew install pkg-config cairo pango libpng jpeg giflib librsvg pixman` |
-    | Ubuntu  | `sudo apt-get install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev`        |
-    | Fedora  | `sudo yum install gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib-devel`                             |
-    | Solaris | `pkgin install cairo pango pkg-config xproto renderproto kbproto xextproto`                                     |
-    | OpenBSD | `doas pkg_add cairo pango png jpeg giflib`                                                                      |
-    | Windows | See the [wiki](https://github.com/Automattic/node-canvas/wiki/Installation:-Windows)                            |
-    | Others  | See the [wiki](https://github.com/Automattic/node-canvas/wiki)                                                  |
-
-    **Mac OS X v10.11+:** If you have recently updated to Mac OS X v10.11+ and are experiencing trouble when compiling, run the following command: `xcode-select --install`. Read more about the problem [on Stack Overflow](http://stackoverflow.com/a/32929012/148072).
-    If you have xcode 10.0 or higher installed, in order to build from source you need NPM 6.4.1 or higher.
 
     <br />
 
