@@ -11,7 +11,8 @@
     "update": "git add . && git commit -am 'new version' && npm version patch && npm i",
     "clean": "rm -rf dist",
     "build": "npm run clean ; tsc",
-    "bp": "npm run build ; npm run update"
+    "bp": "npm run build ; npm run update",
+    "prepare": "npm run build"
   },
   "bin": {
     "geom-visualizer": "./dist/index.js"
