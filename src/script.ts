@@ -16,7 +16,7 @@ const OPTIONS: { [key: string]: Options } = {
   title: {
     type: 'string',
     describe: 'Title for the canvas',
-    default: C.DEFAULT_TITLE,
+    demandOption: false,
   },
   encoder: {
     type: 'string',
@@ -66,69 +66,39 @@ export default async function script() {
   // promise かどうかで分岐
   const argv = isPromise(asyncArgv) ? await asyncArgv : asyncArgv;
 
-  // inquirer を使って対話型のプロンプトを表示
-  const responses: {
-    [key: string]: string | number | null;
-  } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'inputFile',
-      message: 'Enter input file:',
-    },
-    {
-      type: 'input',
-      name: 'outputDir',
-      message: 'Enter output directory:',
-    },
-    {
-      type: 'input',
-      name: 'title',
-      message: 'Enter title for the canvas:',
-      default: argv.title,
-    },
-    {
-      type: 'input',
-      name: 'encoder',
-      message: 'Enter encoder(Enter to skip):',
-      default: argv.encoder,
-    },
-    {
-      type: 'number',
-      name: 'canvasWidth',
-      message: 'Enter width of the canvas(Enter to skip):',
-      default: argv.canvasWidth,
-    },
-    {
-      type: 'input',
-      name: 'strokeStyle',
-      message: 'Enter stroke style(Enter to skip):',
-      default: argv.strokeStyle,
-    },
-    {
-      type: 'number',
-      name: 'lineWidth',
-      message: 'Enter line width(Enter to skip):',
-      default: argv.lineWidth,
-    },
-    {
-      type: 'input',
-      name: 'fillStyle',
-      message: 'Enter fill style(Enter to skip):',
-      default: argv.fillStyle,
-    },
-    {
-      type: 'input',
-      name: 'bgColor',
-      message: 'Enter background color(Enter to skip):',
-      default: argv.bgColor,
-    },
-    {
-      type: 'input',
-      name: 'scoreKey',
-      message: 'Enter score key(Enter to skip):',
-      default: argv.scoreKey,
-    },
-  ]);
+  // 対話型プロンプトの配列を動的に生成
+  const prompts = [];
+
+  for (const [key, option] of Object.entries(OPTIONS)) {
+    // argv[key] が未定義の場合、ユーザーに尋ねる
+    if (argv[key] === undefined && option.demandOption !== false) {
+      const basePrompt = {
+        name: key,
+        default: option.default,
+      };
+
+      switch (option.type) {
+        case 'string':
+          prompts.push({
+            ...basePrompt,
+            type: 'input',
+            message: `Enter ${option.describe?.toLowerCase()}:`,
+          });
+          break;
+        case 'number':
+          prompts.push({
+            ...basePrompt,
+            type: 'number',
+            message: `Enter ${option.describe?.toLowerCase()}(Enter to skip):`,
+          });
+          break;
+        // 他のタイプの場合も必要に応じて追加
+      }
+    }
+  }
+
+  // prompts 配列が空でなければ inquirer を使って対話型プロンプトを表示
+  const responses = prompts.length > 0 ? await inquirer.prompt(prompts) : {};
 
   const props = Object.assign({}, argv, responses);
 
