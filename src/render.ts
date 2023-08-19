@@ -1,15 +1,76 @@
 import * as T from '@turf/turf';
-import { Canvas, CanvasRenderingContext2D, createCanvas } from 'canvas';
+import Color from 'color';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import fs from 'fs';
 import path from 'path';
+import sharp from 'sharp';
 import * as C from './constants.js';
 import GeoJsonConverter from './stream.js';
 import { GeoJsonIterator, Props } from './types/type.js';
 
+class SVG {
+  public static convertSVGtoPNG(
+    svgPath: string,
+    w: number,
+    h: number,
+    bgColor: string
+  ): Promise<void> {
+    const pngPath = svgPath.replace(/\.svg$/, '.png');
+
+    return new Promise((resolve, reject) => {
+      // 先に SVG をリサイズ
+      sharp(svgPath)
+        .resize(w, h)
+        .toBuffer()
+        .then((data) => {
+          // リサイズされた SVG を基盤となる画像と合成
+          sharp({
+            create: {
+              width: w,
+              height: h,
+              channels: 3,
+              background: Color(bgColor).rgb().object(),
+            },
+          })
+            .composite([
+              {
+                input: data, // ここでリサイズされた SVG のバッファを使用
+                blend: 'over',
+                top: 0,
+                left: 0,
+              },
+            ])
+            .png()
+            .toFile(pngPath, (err) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve();
+              }
+            });
+        })
+        .catch(reject);
+    });
+  }
+
+  public static writeSVGHeader(ws: fs.WriteStream, w: number, h: number): void {
+    const header = `<svg width="${w}" height="${h}" xmlns="http://www.w3.org/2000/svg">\n`;
+    ws.write(header);
+  }
+
+  public static writeSVGFooter(ws: fs.WriteStream): void {
+    ws.write('</svg>');
+  }
+
+  public static writeSVGTitle(ws: fs.WriteStream, title: string): void {
+    let svgTitle = `<title>${title}</title>\n`;
+    svgTitle += `<text x="10" y="20" font-family="Arial" font-size="20" fill="black">${title}</text>\n`;
+    ws.write(svgTitle);
+  }
+}
+
 export default class GeoJsonRenderer {
-  private canvas: Canvas | null = null;
-  private ctx: CanvasRenderingContext2D | null = null;
+  private outputStream: fs.WriteStream | null = null;
   private bounds?: number[];
 
   private title: string | null;
@@ -45,7 +106,7 @@ export default class GeoJsonRenderer {
 
     this.title = title;
     this.encoder = encoder;
-    this.canvasWidth = canvasWidth;
+    this.canvasWidth = this.fixNumber(canvasWidth);
     this.strokeStyle = strokeStyle;
     this.lineWidth = lineWidth;
     this.fillStyle = fillStyle;
@@ -63,56 +124,52 @@ export default class GeoJsonRenderer {
     }
 
     const fileName = path.basename(inputFile, path.extname(inputFile));
-    const outputFile = path.join(outputDir, `${fileName}.png`);
+    const outputFile = path.join(outputDir, `${fileName}.svg`);
 
-    // 1. geojson ファイルの bbox を取得する
+    this.outputStream = fs.createWriteStream(outputFile);
+
+    if (!this.outputStream) {
+      throw new Error('Failed to create a write stream.');
+    }
+    this.outputStream.on('error', (err) => {
+      throw err;
+    });
+
+    // 0. geojson ファイルの bbox を取得する
     const iteratorWithBbox = GeoJsonConverter.convert(inputFile, this.encoder);
     await this.getBounds(iteratorWithBbox);
 
-    // 2. geojson ファイルを読み込んで、各 feature を描画する
+    if (!this.canvasHeight) {
+      throw new Error('Failed to get the bounds.');
+    }
+
+    // 1. SVG のヘッダーを書き込む
+    SVG.writeSVGHeader(this.outputStream, this.canvasWidth, this.canvasHeight);
+
+    // 2. タイトルを描画する
+    if (this.title) {
+      SVG.writeSVGTitle(this.outputStream, this.title);
+    }
+
+    // 3. geojson ファイルを読み込んで、各 feature を描画する
     const iteratorWithFeature = GeoJsonConverter.convert(
       inputFile,
       this.encoder
     );
     await this.renderGeoJson(iteratorWithFeature);
 
-    // 3. タイトルを描画する
-    this.setTitle();
+    // 4. SVG のフッターを書き込む
+    SVG.writeSVGFooter(this.outputStream);
 
-    // 4. 画像を保存する
-    await this.saveToFile(outputFile);
-  }
+    this.outputStream.end();
 
-  private async saveToFile(output: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!this.canvas) {
-        throw new Error('canvas is not set');
-      }
-
-      if (!fs.existsSync(path.dirname(output))) {
-        fs.mkdirSync(path.dirname(output));
-      }
-
-      const out = fs.createWriteStream(output);
-      const stream = this.canvas.createPNGStream();
-      stream.pipe(out);
-      out.on('finish', () => {
-        console.log('PNG file was created.');
-        resolve();
-      });
-
-      out.on('error', (err) => {
-        reject(err);
-      });
-    });
-  }
-
-  private setTitle(): void {
-    if (this.title && this.ctx) {
-      this.ctx.fillStyle = this.strokeStyle;
-      this.ctx.font = '24px Arial';
-      this.ctx.fillText(this.title, 10, 30);
-    }
+    // 5. SVG を PNG に変換する
+    await SVG.convertSVGtoPNG(
+      outputFile,
+      this.canvasWidth,
+      this.canvasHeight,
+      this.bgColor
+    );
   }
 
   /**
@@ -163,10 +220,7 @@ export default class GeoJsonRenderer {
     const geoAspect = geoHeight / geoWidth;
 
     // キャンバスの縦の長さを計算
-    this.canvasHeight = this.canvasWidth * geoAspect;
-
-    this.canvas = createCanvas(this.canvasWidth, this.canvasHeight);
-    this.ctx = this.canvas.getContext('2d');
+    this.canvasHeight = this.fixNumber(this.canvasWidth * geoAspect);
 
     // カラーグラデーションを作成
     if (this.scoreRange) {
@@ -182,14 +236,6 @@ export default class GeoJsonRenderer {
    */
   private async renderGeoJson(iterator: GeoJsonIterator): Promise<void> {
     console.log('rendering...');
-    if (!this.ctx || !this.canvas || !this.canvasHeight) {
-      throw new Error('ctx is not set');
-    }
-
-    // Clear canvas
-    this.ctx.fillStyle = this.bgColor;
-    this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
-    this.ctx.lineWidth = this.lineWidth;
 
     for await (const feature of iterator) {
       T.geojsonType(feature, 'Feature', 'geojson feature');
@@ -201,29 +247,29 @@ export default class GeoJsonRenderer {
 
       switch (geometry.type) {
         case 'Point':
-          this.renderPoint(this.ctx, geometry.coordinates, score);
+          this.renderPoint(geometry.coordinates, score);
           break;
         case 'MultiPoint':
           for (const coord of geometry.coordinates) {
-            this.renderPoint(this.ctx, coord, score);
+            this.renderPoint(coord, score);
           }
           break;
 
         case 'LineString':
-          this.renderLineString(this.ctx, geometry.coordinates, score);
+          this.renderLineString(geometry.coordinates, score);
           break;
         case 'MultiLineString':
           for (const line of geometry.coordinates) {
-            this.renderLineString(this.ctx, line, score);
+            this.renderLineString(line, score);
           }
           break;
 
         case 'Polygon':
-          this.renderPolygon(this.ctx, geometry.coordinates, score);
+          this.renderPolygon(geometry.coordinates, score);
           break;
         case 'MultiPolygon':
           for (const polygon of geometry.coordinates) {
-            this.renderPolygon(this.ctx, polygon, score);
+            this.renderPolygon(polygon, score);
           }
           break;
         default:
@@ -252,48 +298,33 @@ export default class GeoJsonRenderer {
     return [canvasX, canvasY];
   }
 
-  private renderPoint(
-    ctx: CanvasRenderingContext2D,
-    coord: number[],
-    score?: number
-  ): void {
-    const [canvasX, canvasY] = this.project(coord);
-    ctx.beginPath();
-    ctx.arc(canvasX, canvasY, 1, 0, 2 * Math.PI);
-    ctx.fillStyle = this.colorize(this.fillStyle, score);
-    ctx.fill();
+  private renderPoint(coord: number[], score?: number): void {
+    const [x, y] = this.project(coord);
+    const element = `<circle cx="${x}" cy="${y}" r="1" fill="${this.colorize(
+      this.fillStyle,
+      score
+    )}"/>\n`;
+    this.outputStream?.write(element);
   }
 
-  private renderLineString(
-    ctx: CanvasRenderingContext2D,
-    line: number[][],
-    score?: number
-  ): void {
-    ctx.beginPath();
-    for (const coord of line) {
-      const [canvasX, canvasY] = this.project(coord);
-      ctx.lineTo(canvasX, canvasY);
-    }
-    ctx.strokeStyle = this.colorize(this.fillStyle, score);
-    ctx.stroke();
+  private renderLineString(line: number[][], score?: number): void {
+    const d = line.map(([x, y]) => this.project([x, y]).join(',')).join(' ');
+    const element = `<polyline points="${d}" stroke="${this.colorize(
+      this.fillStyle,
+      score
+    )}" stroke-width="${this.lineWidth}"/>\n`;
+    this.outputStream?.write(element);
   }
 
-  private renderPolygon(
-    ctx: CanvasRenderingContext2D,
-    polygon: number[][][],
-    score?: number
-  ): void {
-    ctx.beginPath();
+  private renderPolygon(polygon: number[][][], score?: number): void {
     for (const ring of polygon) {
-      for (const coord of ring) {
-        const [canvasX, canvasY] = this.project(coord);
-        ctx.lineTo(canvasX, canvasY);
-      }
+      const d = ring.map(([x, y]) => this.project([x, y]).join(',')).join(' ');
+      const element = `<polygon points="${d}" fill="${this.colorize(
+        this.fillStyle,
+        score
+      )}" stroke="${this.strokeStyle}" stroke-width="${this.lineWidth}"/>\n`;
+      this.outputStream?.write(element);
     }
-    ctx.closePath();
-    ctx.fillStyle = this.colorize(this.fillStyle, score);
-    ctx.strokeStyle = this.strokeStyle;
-    ctx.fill();
   }
 
   private colorize(basicColor: string, score: number | undefined): string {
@@ -302,5 +333,9 @@ export default class GeoJsonRenderer {
     }
 
     return basicColor;
+  }
+
+  private fixNumber(num: number) {
+    return Number(num.toFixed(0));
   }
 }

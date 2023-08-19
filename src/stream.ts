@@ -6,8 +6,8 @@ import { createRequire } from 'module';
 import path from 'path';
 import { Transform } from 'stream';
 import streamJSON from 'stream-json';
-import streamJSONPick from 'stream-json/filters/Pick';
-import streamJSONArray from 'stream-json/streamers/StreamArray';
+import streamJSONPick from 'stream-json/filters/Pick.js';
+import streamJSONArray from 'stream-json/streamers/StreamArray.js';
 import { GeoJsonIterator } from './types/type';
 
 const { parser } = streamJSON;
