@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import * as C from './constants.js';
 import GeoJsonConverter from './stream.js';
-import { GeoJsonIterator, Props } from './type';
+import { GeoJsonIterator, Props } from './types/type.js';
 
 export default class GeoJsonRenderer {
   private canvas: Canvas | null = null;

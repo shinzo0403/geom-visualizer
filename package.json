@@ -9,7 +9,8 @@
     "test": "jest",
     "ts-esm": "node --experimental-specifier-resolution=node --max_old_space_size=16000 --loader ts-node/esm",
     "prepare": "npm run build",
-    "build": "tsc"
+    "clean": "rm -rf dist",
+    "build": "npm run clean ; tsc"
   },
   "bin": {
     "geom-visualizer": "./dist/index.js"

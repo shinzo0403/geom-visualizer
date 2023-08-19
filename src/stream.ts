@@ -8,7 +8,7 @@ import { Transform } from 'stream';
 import streamJSON from 'stream-json';
 import streamJSONPick from 'stream-json/filters/Pick';
 import streamJSONArray from 'stream-json/streamers/StreamArray';
-import { GeoJsonIterator } from './type';
+import { GeoJsonIterator } from './types/type';
 
 const { parser } = streamJSON;
 const { pick } = streamJSONPick;
