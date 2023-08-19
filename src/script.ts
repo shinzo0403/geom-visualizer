@@ -1,4 +1,3 @@
-import fs from 'fs';
 import inquirer from 'inquirer';
 import yargs, { Options } from 'yargs';
 import { hideBin } from 'yargs/helpers';
@@ -6,6 +5,14 @@ import * as C from './constants';
 import { Props } from './type';
 
 const OPTIONS: { [key: string]: Options } = {
+  inputFile: {
+    type: 'string',
+    describe: 'Input file',
+  },
+  outputDir: {
+    type: 'string',
+    describe: 'Output directory',
+  },
   title: {
     type: 'string',
     describe: 'Title for the canvas',
@@ -53,15 +60,6 @@ function isPromise(obj: any): obj is Promise<unknown> {
 }
 
 export default async function script() {
-  const inputFile = process.argv[2];
-
-  if (!inputFile || !fs.existsSync(inputFile)) {
-    console.error(
-      'Input file is not specified or does not exist. :' + inputFile
-    );
-    process.exit(1);
-  }
-
   // yargs を使って CLI 引数を取得
   const asyncArgv = yargs(hideBin(process.argv)).options(OPTIONS).argv;
 
@@ -74,6 +72,16 @@ export default async function script() {
   } = await inquirer.prompt([
     {
       type: 'input',
+      name: 'inputFile',
+      message: 'Enter input file:',
+    },
+    {
+      type: 'input',
+      name: 'outputDir',
+      message: 'Enter output directory:',
+    },
+    {
+      type: 'input',
       name: 'title',
       message: 'Enter title for the canvas:',
       default: argv.title,
@@ -81,48 +89,48 @@ export default async function script() {
     {
       type: 'input',
       name: 'encoder',
-      message: 'Enter encoder:',
+      message: 'Enter encoder(Enter to skip):',
       default: argv.encoder,
     },
     {
       type: 'number',
       name: 'canvasWidth',
-      message: 'Enter width of the canvas:',
+      message: 'Enter width of the canvas(Enter to skip):',
       default: argv.canvasWidth,
     },
     {
       type: 'input',
       name: 'strokeStyle',
-      message: 'Enter stroke style:',
+      message: 'Enter stroke style(Enter to skip):',
       default: argv.strokeStyle,
     },
     {
       type: 'number',
       name: 'lineWidth',
-      message: 'Enter line width:',
+      message: 'Enter line width(Enter to skip):',
       default: argv.lineWidth,
     },
     {
       type: 'input',
       name: 'fillStyle',
-      message: 'Enter fill style:',
+      message: 'Enter fill style(Enter to skip):',
       default: argv.fillStyle,
     },
     {
       type: 'input',
       name: 'bgColor',
-      message: 'Enter background color:',
+      message: 'Enter background color(Enter to skip):',
       default: argv.bgColor,
     },
     {
       type: 'input',
       name: 'scoreKey',
-      message: 'Enter score key:',
+      message: 'Enter score key(Enter to skip):',
       default: argv.scoreKey,
     },
   ]);
 
-  const props = Object.assign({}, argv, responses, { inputFile });
+  const props = Object.assign({}, argv, responses);
 
   return props as Partial<Props>;
 }
