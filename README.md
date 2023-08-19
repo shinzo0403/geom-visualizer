@@ -29,6 +29,26 @@ npm install @shinzo0403/geom-visualizer
 
 ---
 
+## 実行
+
+<br />
+
+- グローバル
+
+```bash
+geom-visualizer
+```
+
+- ローカル
+
+```bash
+./node_modules/.bin/geom-visualizer
+```
+
+<br />
+
+---
+
 <br />
 
 ## 概要
@@ -104,6 +124,16 @@ Node.js + TypeScript を使用して、様々な形式のジオメトリファ�
 ## トラブルシューティング
 
 <br />
+
+- **Q.** `zsh: permission denied: ./node_modules/.bin/geom-visualizer` と表示される
+
+  - **A.** `geom-visualizer` に実行権限が付与されていません。以下のコマンドを実行してください。
+
+    ```bash
+    chmod +x ./node_modules/.bin/geom-visualizer
+    ```
+
+    <br />
 
 - **Q.** `Error: Cannot find module 'canvas'` と表示される
 
