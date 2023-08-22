@@ -145,6 +145,17 @@ geom-visualizer \
 
 <br />
 
+- **Q.** `npm i` でインストールできない
+
+  - **A.** 本ライブラリは、`GitHub Packages` に公開されています。したがって、`.npmrc` に以下の設定を追加してください。
+
+    ```bash
+    //npm.pkg.github.com:_authToken=<token>
+    @shinzo0403:registry=https://npm.pkg.github.com
+    ```
+
+<br />
+
 - **Q.** `zsh: permission denied: ./node_modules/.bin/geom-visualizer` と表示される
 
   - **A.** `geom-visualizer` に実行権限が付与されていません。以下のコマンドを実行してください。
