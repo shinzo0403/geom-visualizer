@@ -2,6 +2,7 @@ import * as T from '@turf/turf';
 import Color from 'color';
 import { ScaleLinear, scaleLinear } from 'd3-scale';
 import fs from 'fs';
+import _ from 'lodash';
 import path from 'path';
 import sharp from 'sharp';
 import * as C from './constants.js';
@@ -224,9 +225,18 @@ export default class GeoJsonRenderer {
 
     // カラーグラデーションを作成
     if (this.scoreRange) {
-      this.scale = scaleLinear<string>()
-        .domain(this.scoreRange)
+      const max = this.scoreRange[1];
+      const min = this.scoreRange[0];
+      const colorLength = this.colorRange.length;
+
+      const step = (max - min) / (colorLength - 1);
+      const domain = _.range(min, max + step * 0.5, step); // maxに近づけるためにステップの半分を加える
+
+      const gradient = scaleLinear<string>()
+        .domain(domain)
         .range(this.colorRange);
+
+      this.scale = gradient;
     }
   }
 

@@ -154,6 +154,20 @@ geom-visualizer \
     @shinzo0403:registry=https://npm.pkg.github.com
     ```
 
+  - `Docker` を使用する場合は、`Dockerfile` に `.npmrc` を追加してください。
+
+    ```Dockerfile
+    # 設定
+    COPY .npmrc /usr/src/app/.npmrc
+    COPY package*.json /usr/src/app/
+
+    # インストール
+    RUN npm install
+
+    # セキュリティを考慮して、削除
+    RUN rm -f /usr/src/app/.npmrc
+    ```
+
 <br />
 
 - **Q.** `zsh: permission denied: ./node_modules/.bin/geom-visualizer` と表示される
