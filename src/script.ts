@@ -71,7 +71,7 @@ export default async function script() {
 
   for (const [key, option] of Object.entries(OPTIONS)) {
     // argv[key] が未定義の場合、ユーザーに尋ねる
-    if (argv[key] === undefined && option.demandOption !== false) {
+    if (argv[key] === undefined || argv[key] === option.default) {
       const basePrompt = {
         name: key,
         default: option.default,
