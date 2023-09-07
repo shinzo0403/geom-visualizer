@@ -28,6 +28,28 @@ class GeoJSONOperator {
     public bounds: number[] | null = null
   ) {}
 
+  public renderFeatureWithLabel(
+    feature: T.Feature<T.Geometries>,
+    scoreKey: string | null = null,
+    labelKey: string | null = null
+  ): string {
+    const svg = this.renderFeature(feature, scoreKey);
+    if (labelKey && feature.properties && feature.properties[labelKey]) {
+      return svg + this.labelFeature(feature, feature.properties[labelKey]);
+    }
+    return svg;
+  }
+
+  private labelFeature(
+    feature: T.Feature<T.Geometries>,
+    label: string
+  ): string {
+    const centroid = T.centroid(feature);
+    const [x, y] = this.project(centroid.geometry.coordinates);
+
+    return `<text x="${x}" y="${y}" font-family="Arial" font-size="12" fill="black">${label}</text>\n`;
+  }
+
   public renderFeature(
     feature: T.Feature<T.Geometries>,
     scoreKey: string | null = null
@@ -151,6 +173,7 @@ export default class GeoJsonRenderer extends GeoJSONOperator {
   private bgColor: string;
 
   private scoreKey: string | null = null;
+  private labelKey: string | null = null;
 
   constructor(props: Partial<Exclude<Props, 'inputFile'>> = {}) {
     const {
@@ -162,6 +185,7 @@ export default class GeoJsonRenderer extends GeoJSONOperator {
       fillStyle = C.DEFAULT_FILL_STYLE,
       bgColor = C.DEFAULT_BG_COLOR,
       scoreKey = C.DEFAULT_SCORE_KEY,
+      labelKey = C.DEFAULT_LABEL_KEY,
     } = props;
 
     super(canvasWidth, null, strokeStyle, lineWidth, fillStyle, null);
@@ -174,6 +198,7 @@ export default class GeoJsonRenderer extends GeoJSONOperator {
     this.fillStyle = fillStyle;
     this.bgColor = bgColor;
     this.scoreKey = scoreKey;
+    this.labelKey = labelKey;
   }
 
   public async save(inputFile: string, outputDir: string): Promise<void> {
@@ -233,12 +258,20 @@ export default class GeoJsonRenderer extends GeoJSONOperator {
         if (!isStarted) {
           const header = this.writeSVGHeader();
           const title = this.writeSVGTitle();
-          const svg = this.renderFeature(row, this.scoreKey);
+          const svg = this.renderFeatureWithLabel(
+            row,
+            this.scoreKey,
+            this.labelKey
+          );
           const buffer = Buffer.from(header + title + svg);
           done(null, buffer);
           isStarted = true;
         } else {
-          const svg = this.renderFeature(row, this.scoreKey);
+          const svg = this.renderFeatureWithLabel(
+            row,
+            this.scoreKey,
+            this.labelKey
+          );
           const buffer = Buffer.from(svg);
           done(null, buffer);
         }

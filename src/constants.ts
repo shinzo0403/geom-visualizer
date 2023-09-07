@@ -6,3 +6,4 @@ export const DEFAULT_LINE_WIDTH = 1;
 export const DEFAULT_FILL_STYLE = 'red';
 export const DEFAULT_BG_COLOR = '#fff';
 export const DEFAULT_SCORE_KEY = null;
+export const DEFAULT_LABEL_KEY = null;

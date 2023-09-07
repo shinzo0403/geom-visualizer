@@ -53,6 +53,11 @@ const OPTIONS: { [key: string]: Options } = {
     describe: 'Score key',
     default: C.DEFAULT_SCORE_KEY,
   },
+  labelKey: {
+    type: 'string',
+    describe: 'Label key',
+    default: C.DEFAULT_LABEL_KEY,
+  },
 };
 
 function isPromise(obj: any): obj is Promise<unknown> {
