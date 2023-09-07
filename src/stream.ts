@@ -8,7 +8,6 @@ import { Transform } from 'stream';
 import streamJSON from 'stream-json';
 import streamJSONPick from 'stream-json/filters/Pick.js';
 import streamJSONArray from 'stream-json/streamers/StreamArray.js';
-import { GeoJsonIterator } from './types/type';
 
 const { parser } = streamJSON;
 const { pick } = streamJSONPick;
@@ -20,7 +19,7 @@ const shpStream = require('shp-stream');
  * データ型を判定して、geojson feature のストリームを返す
  */
 export default class GeoJsonConverter {
-  public static convert(input: string, decode: string): GeoJsonIterator {
+  public static convert(input: string, decode: string) {
     // 拡張子に応じて変換処理を分岐
     const ext = path.extname(input).replace('.', '');
 
@@ -55,7 +54,7 @@ export default class GeoJsonConverter {
       },
     });
 
-    return reader.pipe(transform) as GeoJsonIterator;
+    return reader.pipe(transform);
   }
 
   private static encodeProperties(row: any, decode: string) {
@@ -81,7 +80,7 @@ export default class GeoJsonConverter {
       .pipe(parser())
       .pipe(pick({ filter: 'features' }))
       .pipe(streamArray())
-      .pipe(transform) as GeoJsonIterator;
+      .pipe(transform);
   }
 
   private static convertCsv(input: string, decode: string) {
@@ -111,7 +110,7 @@ export default class GeoJsonConverter {
       .createReadStream(input)
       .pipe(iconv.decodeStream(decode))
       .pipe(csvParser())
-      .pipe(transform) as GeoJsonIterator;
+      .pipe(transform);
   }
 
   private static hasWkt(row: any): string {
