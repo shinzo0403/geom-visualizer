@@ -1,6 +1,6 @@
 {
   "name": "@shinzo0403/geom-visualizer",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "instantly visualize geojson data on the map",
   "type": "module",
   "main": "dist/index.js",

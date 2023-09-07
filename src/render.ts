@@ -44,7 +44,27 @@ class GeoJSONOperator {
     feature: T.Feature<T.Geometries>,
     label: string
   ): string {
-    const centroid = T.centroid(feature);
+    let centroid: T.Feature<T.Point>;
+
+    switch (feature.geometry.type) {
+      case 'Point':
+      case 'MultiPoint':
+      case 'LineString':
+      case 'MultiLineString': {
+        centroid = T.centroid(feature);
+        break;
+      }
+
+      case 'Polygon':
+      case 'MultiPolygon': {
+        centroid = T.centerOfMass(feature);
+        break;
+      }
+
+      default:
+        throw new Error(`Unknown geometry type: ${feature.geometry}`);
+    }
+
     const [x, y] = this.project(centroid.geometry.coordinates);
 
     return `<text x="${x}" y="${y}" font-family="Arial" font-size="12" fill="black">${label}</text>\n`;
